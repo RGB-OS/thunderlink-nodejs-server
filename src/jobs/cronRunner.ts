@@ -10,15 +10,13 @@ let cronRunning = true;
 let timeoutHandle: NodeJS.Timeout | null = null;
 
 export const startCronRunner = async () => {
-    logger.info(`[CronRunner] Starting with interval ${CRON_INTERVAL_MS / 1000}s`);
-
     const loop = async () => {
         if (!cronRunning) {
             logger.info('[CronRunner] Cron stopped. Exiting loop.');
             return;
         }
 
-        logger.info(`[CronRunner] Running maintenance tasks at ${new Date().toISOString()}...`);
+        logger.info(`[CronRunner]  Starting with interval ${CRON_INTERVAL_MS / 1000}s Running maintenance tasks at ${new Date().toISOString()}`);
 
         try {
             const unspents = await wallet.listUnspents();
@@ -29,10 +27,22 @@ export const startCronRunner = async () => {
 
             logger.info(`[CronRunner] Tasks completed`);
             timeoutHandle = setTimeout(loop, CRON_INTERVAL_MS); // only schedule next loop if successful
-        } catch (error) {
-            logger.error({error},'[CronRunner Critical Error]');
+        } catch (error:any) {
+            if (error.response) {
+                // Log the real backend error message
+                logger.error({
+                  status: error.response.status,
+                  data: error.response.data,
+                }, '[CronRunner Critical Error] Cron stopped due to backend error');
+              } else {
+                // Unexpected (network, Axios bug, etc.)
+                logger.error({
+                  message: error.message,
+                  stack: error.stack,
+                }, '[CronRunner Critical Error] Cron stopped due to network or unexpected error');
+              }
+            // logger.error({error},'[CronRunner Critical Error]  Cron stopped due to error');
             cronRunning = false;
-            logger.error('[CronRunner] Cron stopped due to error.');
         }
     };
 

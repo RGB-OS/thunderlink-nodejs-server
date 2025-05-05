@@ -10,6 +10,9 @@ export function decodeInvoice(invoice: string) {
     expiration_timestamp: null,
     transport_endpoints: [] as string[],
   };
+  if(!invoice){
+    throw new Error('Invalid invoice');
+  };
 
   const [prefix, query] = invoice.split('?');
   const [asset_id, iface, amountAndRecipient] = prefix.split('/');

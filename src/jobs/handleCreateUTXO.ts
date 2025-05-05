@@ -14,8 +14,6 @@ export const handleCreateUTXO = async () => {
     });
 
     const availableCount = availableUtxos.length;
-    logger.info(`[UTXO Checker] Available UTXOs: ${availableCount}/${UTXO_LIMIT}`);
-
     if (availableCount < UTXO_LIMIT) {
         const diff = UTXO_LIMIT - availableCount;
         logger.info(`[UTXO Checker] Need to create ${diff} new UTXOs...`);
@@ -24,10 +22,10 @@ export const handleCreateUTXO = async () => {
             await createUtxos(diff);
             logger.info(`[UTXO Checker] Successfully created ${diff} UTXOs.`);
         } catch (error) {
-            logger.error('[UTXO Checker Error]', error);
+            logger.error({error},'[UTXO Checker Error]');
         }
     } else {
-        logger.info('[UTXO Checker] Enough UTXOs available. No action needed.');
+        logger.info(`[UTXO Checker] Enough UTXOs available. No action needed.  ${availableCount}/${UTXO_LIMIT}`);
     }
 };
 const createUtxos = async (numUTXOs: number) => {

@@ -3,95 +3,88 @@ import { decodeInvoice } from '../utils/decodeInvoice';
 import { RgbAllocation, RgbTransfer, TransferStatus, Unspent } from '../types/wallet';
 import { wallet } from '../lib/wallet';
 import { logger } from '../lib/logger';
+import { InvoiceWatcher } from './invoiceWatcherManager';
 
-const invoiceWatchers: Record<string, { transfer: RgbTransfer; timer: NodeJS.Timeout }> = {};
-
-export const decodeRGBInvoice = (req: Request, res: Response) => {
-    try {
-        const invoice = decodeInvoice(req.body.invoice);
-        res.json(invoice);
-    } catch (err) {
-        logger.error({ err }, 'Failed to decode RGB invoice');
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
+export const registerWallet = async (req: Request, res: Response): Promise<void> => {
+    const registered = await wallet.registerWallet();
+    res.json(registered);
 }
 
-export const createInvoice = async (req: Request, res: Response): Promise<any> => {
-    try {
-        logger.debug({ body: req.body }, 'invoice/create');
-        const { asset_id, amount } = req.body;
-        const invoice = await wallet.blindRecive({ asset_id, amount });
-        logger.info({ invoice }, 'Invoice created');
-        const { recipient_id } = invoice;
-        const { asset_id: decodedAssetId } = decodeInvoice(invoice.invoice);
+export const decodeRGBInvoice = (req: Request, res: Response): void => {
+    const invoice = decodeInvoice(req.body.invoice);
+    res.json(invoice);
 
-        if (!decodedAssetId) throw new Error('Invalid invoice');
+}
+export const listAssets = async (req: Request, res: Response): Promise<void> => {
+    const assets = await wallet.listAssets();
+    res.json(assets);
+}
 
-        const transfers: RgbTransfer[] = await wallet.listTransfers(decodedAssetId);
-        const transfer = transfers.find(t => t.recipient_id === recipient_id);
-        if (transfer) {
-            const timer = startWatcher(recipient_id, decodedAssetId);
-            invoiceWatchers[recipient_id] = { transfer, timer };
-        }
+export const failTransfers = async (req: Request, res: Response): Promise<void> => {
+    const { batch_transfer_idx } = req.body;
 
-        res.json(invoice);
-    } catch (err) {
-        logger.error({ err }, 'Failed to create invoice');
-        res.status(500).json({ error: 'Internal Server Error' });
+    if (!batch_transfer_idx) {
+        res.status(404).json({ error: 'Transfer not found' });
     }
-};
 
-export const getInvoiceStatus = async (req: Request, res: Response): Promise<any> => {
-    try {
-        logger.debug({ body: req.body }, 'invoice/status');
-        const { invoice, } = req.body;
-        const { asset_id, recipient_id } = decodeInvoice(invoice);
-        if (!asset_id) throw new Error('Invalid invoice');
+    await wallet.failTransfers({ batch_transfer_idx: batch_transfer_idx });
+    res.json({ message: 'Transfer failed' });
+}
 
-        const transfers: RgbTransfer[] = await wallet.listTransfers(asset_id);
-        const transfer = transfers.find(t => t.recipient_id === recipient_id);
+export const createInvoice = async (req: Request, res: Response): Promise<void> => {
+    logger.debug({ body: req.body }, 'invoice/create');
+    const { asset_id, amount } = req.body;
+    const invoice = await wallet.blindRecive({ asset_id, amount });
+    logger.info({ invoice }, 'Invoice created');
+    const { recipient_id } = invoice;
+    const { asset_id: decodedAssetId } = decodeInvoice(invoice.invoice);
 
-        if (!transfer) return res.status(404).json({ error: 'Transfer not found' });
+    if (!decodedAssetId) throw new Error('Invalid invoice');
 
-        if (!invoiceWatchers[recipient_id] && [TransferStatus.WAITING_COUNTERPARTY, TransferStatus.WAITING_CONFIRMATIONS].includes(transfer.status)) {
-            const timer = startWatcher(recipient_id, asset_id);
-            invoiceWatchers[recipient_id] = { transfer, timer };
-        }
-
-        res.json(transfer);
-    } catch (err) {
-        logger.error({ err }, 'Failed to get invoice status');
-        res.status(500).json({ error: 'Internal Server Error' });
+    const transfers: RgbTransfer[] = await wallet.listTransfers(decodedAssetId);
+    const transfer = transfers.find(t => t.recipient_id === recipient_id);
+    if (transfer && InvoiceWatcher.shouldWatch(recipient_id, transfer)) {
+        InvoiceWatcher.startWatcher(recipient_id, asset_id, transfer);
     }
+    res.json(invoice);
 };
 
-const startWatcher = (recipient_id: string, asset_id: string) => {
-    const timer = setInterval(() => refreshWatcher(recipient_id, asset_id), 10_000);
-    logger.info(`[Watcher started] ${recipient_id}`);
-    return timer;
-};
+export const getInvoiceStatus = async (req: Request, res: Response): Promise<void> => {
+    logger.debug({ body: req.body }, 'invoice/status');
+    const { invoice, } = req.body;
+    const { asset_id, recipient_id } = decodeInvoice(invoice);
+    if (!asset_id) throw new Error('Invalid invoice');
 
-const stopWatcher = (recipient_id: string) => {
-    const watcher = invoiceWatchers[recipient_id];
-    if (watcher) {
-        clearInterval(watcher.timer);
-        delete invoiceWatchers[recipient_id];
-        logger.info(`[Watcher stopped] ${recipient_id}`);
+    const transfers: RgbTransfer[] = await wallet.listTransfers(asset_id);
+    const transfer = transfers.find(t => t.recipient_id === recipient_id);
+
+    if (!transfer) {
+        res.status(404).json({ error: 'Transfer not found' });
+        return
     }
+
+    if (InvoiceWatcher.shouldWatch(recipient_id, transfer)) {
+        InvoiceWatcher.startWatcher(recipient_id, asset_id, transfer);
+    }
+    res.json(transfer);
 };
 
-const refreshWatcher = async (recipient_id: string, asset_id: string) => {
-    try {
-        await wallet.refreshWallet();
-        const transfers: RgbTransfer[] = await wallet.listTransfers(asset_id);
-        const updated = transfers.find(t => t.recipient_id === recipient_id);
-        if (updated) {
-            invoiceWatchers[recipient_id].transfer = updated;
-            if ([TransferStatus.SETTLED, TransferStatus.FAILED].includes(updated.status)) {
-                stopWatcher(recipient_id);
-            }
-        }
-    } catch (err) {
-        logger.error({ err }, `Watcher error for ${recipient_id}`);
-    }
-};
+export const getBtcBalance = async (req: Request, res: Response): Promise<void> => {
+    const balance = await wallet.getBtcBalance();
+    res.json(balance);
+}
+export const getAddress = async (req: Request, res: Response): Promise<void> => {
+    const address = await wallet.getAddress();
+    res.json(address);
+}
+export const listUnspents = async (req: Request, res: Response): Promise<void> => {
+    const unspent: Unspent[] = await wallet.listUnspents();
+    res.json(unspent);
+}
+
+export const listTransfers = async (req: Request, res: Response): Promise<void> => {
+    const { asset_id } = req.params;
+    const transfers: RgbTransfer[] = await wallet.listTransfers(asset_id);
+    res.json(transfers);
+}
+

@@ -1,6 +1,7 @@
 import { wallet } from "thunderlink-sdk";
 import { RgbTransfer, TransferStatus, Unspent } from "../types/wallet";
 import { logger } from "../lib/logger";
+import { InvoiceWatcher } from "../services/invoiceWatcherManager";
 
 export const handleExpiredTransfers = async (unsettled: Unspent[]) => {
     const assetIds = Array.from(
@@ -38,6 +39,12 @@ export const handleExpiredTransfers = async (unsettled: Unspent[]) => {
                             throw error; // rethrow the error to be handled by the caller
                         }
                     }
+                    // start watching the transfer if some isnt watched
+                    if(InvoiceWatcher.shouldWatch(transfer.recipient_id, transfer)) {
+                        logger.info(`[Expire Transfer] Starting watcher for ${transfer.recipient_id}`);
+                        InvoiceWatcher.startWatcher(transfer.recipient_id, assetId, transfer);
+                    }
+
                 }
             }
         } catch (err) {

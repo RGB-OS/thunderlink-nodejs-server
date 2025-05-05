@@ -2,8 +2,10 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import invoiceRoutes from './routes/invoice';
+import walletRoutes from './routes/wallet';
 import { startCronRunner, stopCronRunner } from './jobs/cronRunner';
 import { logger } from './lib/logger';
+import { parseBool } from './utils/parseBool';
 
 const app = express();
 const port = process.env.PORT || 4001;
@@ -11,14 +13,19 @@ const port = process.env.PORT || 4001;
 app.use(cors());
 app.use(express.json());
 app.use('/api/invoice', invoiceRoutes);
+app.use('/api/wallet', walletRoutes);
 
 app.listen(port, () => {
   logger.info(`🚀 ThunderLink API running at http://localhost:${port}`);
 });
 
-startCronRunner();
 
-// Graceful shutdown handling
+if(parseBool(process.env.ENABLE_CRON)){
+  logger.info('Cron enabled');
+  startCronRunner();
+
+}
+
 const shutdown = async () => {
   logger.info('\n[Server] Shutting down gracefully...');
 
