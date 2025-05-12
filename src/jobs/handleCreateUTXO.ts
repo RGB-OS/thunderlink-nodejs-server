@@ -3,7 +3,7 @@ import { wallet } from "../lib/wallet";
 import { Unspent } from "../types/wallet";
 
 const mnemonic = process.env.MNEMONIC!;
-const UTXO_LIMIT = parseInt(process.env.UNSETTLED_UTXO_LIMIT || '20', 10);
+const UTXO_LIMIT = parseInt(process.env.UNSETELED_UTXO_LIMIT || '20', 10);
 
 export const handleCreateUTXO = async () => {
     const unspents = await wallet.listUnspents();
@@ -22,7 +22,8 @@ export const handleCreateUTXO = async () => {
             await createUtxos(diff);
             logger.info(`[UTXO Checker] Successfully created ${diff} UTXOs.`);
         } catch (error) {
-            logger.error({error},'[UTXO Checker Error]');
+            console.error('Error creating UTXOs:', error);
+            logger.error(error,'[UTXO Checker Error]');
         }
     } else {
         logger.info(`[UTXO Checker] Enough UTXOs available. No action needed.  ${availableCount}/${UTXO_LIMIT}`);
@@ -30,7 +31,9 @@ export const handleCreateUTXO = async () => {
 };
 const createUtxos = async (numUTXOs: number) => {
     const psbtBase64 = await wallet.createUtxosBegin({ num: numUTXOs });
+    console.log('psbtBase64', psbtBase64);
     const signedPsbt = await wallet.signPsbt({ psbtBase64, mnemonic });
+    console.log('signPsbt', psbtBase64);
     await wallet.createUtxosEnd({ signedPsbt });
 }
 
