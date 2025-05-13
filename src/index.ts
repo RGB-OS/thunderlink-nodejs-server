@@ -6,6 +6,7 @@ import walletRoutes from './routes/wallet';
 import { startCronRunner, stopCronRunner } from './jobs/cronRunner';
 import { logger } from './lib/logger';
 import { parseBool } from './utils/parseBool';
+import { wallet } from './lib/wallet';
 
 const app = express();
 const port = process.env.PORT || 4001;

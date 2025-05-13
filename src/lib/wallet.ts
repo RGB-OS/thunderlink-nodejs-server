@@ -1,4 +1,4 @@
-import { wallet } from 'thunderlink-sdk';
+import { wallet } from 'rgb-connect-nodejs';
 
 const xpub = process.env.XPUB;
 const rgbEndpoint = process.env.RGB_MANAGER_ENDPOINT;

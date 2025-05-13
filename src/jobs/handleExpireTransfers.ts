@@ -1,4 +1,4 @@
-import { wallet } from "thunderlink-sdk";
+import { wallet } from "rgb-connect-nodejs";
 import { RgbTransfer, TransferStatus, Unspent } from "../types/wallet";
 import { logger } from "../lib/logger";
 import { InvoiceWatcher } from "../services/invoiceWatcherManager";
