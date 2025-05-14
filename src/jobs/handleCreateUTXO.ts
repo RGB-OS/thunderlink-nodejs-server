@@ -21,8 +21,8 @@ export const handleCreateUTXO = async () => {
         try {
             await createUtxos(diff);
             logger.info(`[UTXO Checker] Successfully created ${diff} UTXOs.`);
-        } catch (error) {
-            console.error('Error creating UTXOs:', error);
+        } catch (error:any) {
+            console.error('Error creating UTXOs:', error&&error?.data || error);
             logger.error(error,'[UTXO Checker Error]');
         }
     } else {
