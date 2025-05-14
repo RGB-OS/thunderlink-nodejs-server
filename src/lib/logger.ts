@@ -7,13 +7,14 @@ const isProduction = process.env.NODE_ENV === 'production';
 if (isProduction && !fs.existsSync('./logs')) {
     fs.mkdirSync('./logs');
 }
-export const logger = isProduction ? pino(
-    {
-        level: process.env.LOG_LEVEL || 'info',
-        timestamp: pino.stdTimeFunctions.isoTime,
-    },
-    pino.destination('./logs/app.log')
-) : pino({
+// sProduction ? pino(
+//     {
+//         level: process.env.LOG_LEVEL || 'info',
+//         timestamp: pino.stdTimeFunctions.isoTime,
+//     },
+//     pino.destination('./logs/app.log')
+// ) :
+export const logger =  pino({
     transport: {
         target: 'pino-pretty',
         options: {
