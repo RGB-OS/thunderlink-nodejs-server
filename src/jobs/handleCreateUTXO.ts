@@ -33,7 +33,7 @@ const createUtxos = async (numUTXOs: number) => {
     const psbtBase64 = await wallet.createUtxosBegin({ num: numUTXOs });
     console.log('psbtBase64', psbtBase64);
     const signedPsbt = await wallet.signPsbt({ psbtBase64, mnemonic });
-    console.log('signPsbt', psbtBase64);
+    console.log('signPsbt', signedPsbt);
     await wallet.createUtxosEnd({ signedPsbt });
 }
 

@@ -4,22 +4,32 @@ import { RgbAllocation, RgbTransfer, TransferStatus, Unspent } from '../types/wa
 import { wallet } from '../lib/wallet';
 import { logger } from '../lib/logger';
 import { InvoiceWatcher } from './invoiceWatcherManager';
+import { IssueAssetNiaRequestModel } from 'rgb-connect-nodejs';
 
 export const registerWallet = async (req: Request, res: Response): Promise<void> => {
     const registered = await wallet.registerWallet();
     res.json(registered);
 }
 
-export const decodeRGBInvoice = (req: Request, res: Response): void => {
-    const invoice = decodeInvoice(req.body.invoice);
+export const decodeRGBInvoice = async (req: Request, res: Response): Promise<void> => {
+    const invoice = await wallet.decodeRGBInvoice(req.body);
     res.json(invoice);
 
+}
+export const issueAssetNia = async (req: Request, res: Response): Promise<void> => {
+    const {ticker,name, amounts,precision} = req.body as IssueAssetNiaRequestModel;
+    const assets = await wallet.issueAssetNia({ticker,name, amounts,precision});
+    res.json(assets);
 }
 export const listAssets = async (req: Request, res: Response): Promise<void> => {
     const assets = await wallet.listAssets();
     res.json(assets);
 }
-
+export const getAssetBalance = async (req: Request, res: Response): Promise<void> => {
+    const { asset_id } = req.body;
+    const balance = await wallet.getAssetBalance(asset_id);
+    res.json(balance);
+}
 export const failTransfers = async (req: Request, res: Response): Promise<void> => {
     const { batch_transfer_idx } = req.body;
 
@@ -83,8 +93,12 @@ export const listUnspents = async (req: Request, res: Response): Promise<void> =
 }
 
 export const listTransfers = async (req: Request, res: Response): Promise<void> => {
-    const { asset_id } = req.params;
+    const { asset_id } = req.body;
     const transfers: RgbTransfer[] = await wallet.listTransfers(asset_id);
     res.json(transfers);
 }
 
+export const refreshWallet = async (req: Request, res: Response): Promise<void> => {
+    await wallet.refreshWallet();
+    res.json({ message: 'Wallet refreshed' });
+}

@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import invoiceRoutes from './routes/invoice';
 import walletRoutes from './routes/wallet';
+import webhookRoutes from './routes/webhooks';
 import { startCronRunner, stopCronRunner } from './jobs/cronRunner';
 import { logger } from './lib/logger';
 import { parseBool } from './utils/parseBool';
@@ -19,6 +20,7 @@ app.get('/health', (req, res) => {
 
 app.use('/api/invoice', invoiceRoutes);
 app.use('/api/wallet', walletRoutes);
+app.use('/api/webhook', webhookRoutes);
 
 app.listen(port, () => {
   logger.info(`🚀 ThunderLink API running at http://localhost:${port}`);
