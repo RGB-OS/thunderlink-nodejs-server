@@ -19,7 +19,7 @@ export const handleCreateUTXO = async () => {
         const diff = UTXO_LIMIT - availableCount;
         logger.info(`[UTXO Checker] Need to create ${diff} new UTXOs...`);
         try {
-            // await createUtxos(diff);
+            await createUtxos(diff);
             logger.info(`[UTXO Checker] Successfully created ${diff} UTXOs.`);
         } catch (error:any) {
             console.error('Error creating UTXOs:', error?.data || error);
