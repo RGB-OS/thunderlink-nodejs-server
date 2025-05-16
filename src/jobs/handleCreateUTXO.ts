@@ -17,7 +17,6 @@ export const handleCreateUTXO = async () => {
     if (availableCount < UTXO_LIMIT) {
         const diff = UTXO_LIMIT - availableCount;
         logger.info(`[UTXO Checker] Need to create ${diff} new UTXOs...`);
-
         try {
             await createUtxos(diff);
             logger.info(`[UTXO Checker] Successfully created ${diff} UTXOs.`);
