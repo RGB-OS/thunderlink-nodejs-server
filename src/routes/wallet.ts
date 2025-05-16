@@ -15,5 +15,4 @@ router.post('/listtransfers', auth, apiErrorHandler(listTransfers));
 router.post('/issueassetnia', auth, apiErrorHandler(issueAssetNia));
 router.post('/decodergbinvoice', auth, apiErrorHandler(decodeRGBInvoice));
 router.post('/refresh', auth, apiErrorHandler(refreshWallet));
-
 export default router;
