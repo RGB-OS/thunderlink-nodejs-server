@@ -34,7 +34,7 @@ const createUtxos = async (numUTXOs: number) => {
     console.log('psbtBase64', psbtBase64);
     const signedPsbt = await wallet.signPsbt({ psbtBase64, mnemonic });
     console.log('signPsbt', signedPsbt);
-    await wallet.createUtxosEnd({ signedPsbt });
+    // await wallet.createUtxosEnd({ signedPsbt });
 }
 
 export const getUnsettledUnspents = (
