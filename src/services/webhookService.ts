@@ -13,8 +13,13 @@ export const confirmWebhook = async (req: any, res: any) => {
         // fee_rate?: number;             // default: 1
         // min_confirmations?: number;    // default: 1
         //   }
+        const rgbinvoice = await wallet.decodeRGBInvoice({invoice}) as any;
+        console.log('rgbinvoice', rgbinvoice);
         const invoiceData = {
-            asset_id, recipient_id, amount, invoice
+            // asset_id:rgbinvoice.asset_id, 
+            // recipient_id:rgbinvoice.recipient_id,
+            //  amount,
+             invoice
         }
 
        const psbt = await wallet.sendBegin(invoiceData);
