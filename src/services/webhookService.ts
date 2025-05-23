@@ -5,20 +5,10 @@ const mnemonic = process.env.MNEMONIC!;
 export const confirmWebhook = async (req: any, res: any) => {
 
     try {
-        const { asset_id, recipient_id,amount, invoice } = req.body;
-        //  bridge work is done successfully then asset should be sent to recipient
-        // const transferDetails={
-        // recipient_map: Record<string, Recipient[]>;
-        // donation?: boolean;            // default: false
-        // fee_rate?: number;             // default: 1
-        // min_confirmations?: number;    // default: 1
-        //   }
+        const { invoice } = req.body;
         const rgbinvoice = await wallet.decodeRGBInvoice({invoice}) as any;
-        console.log('rgbinvoice', rgbinvoice);
+        const {asset_id, recipient_id} = rgbinvoice;
         const invoiceData = {
-            // asset_id:rgbinvoice.asset_id, 
-            // recipient_id:rgbinvoice.recipient_id,
-            //  amount,
              invoice
         }
 
