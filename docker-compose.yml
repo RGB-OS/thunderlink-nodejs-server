@@ -1,14 +1,12 @@
-version: '3.9'
-
+version: '3.8'
 services:
-  thunderlink-nodejs-server:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq-secure
     ports:
-      - "${PORT:-4001}:4001"
-    env_file:
-      - .env
-    volumes:
-      - .:/app
-    restart: unless-stopped
+      - "5671:5671"   # TLS
+      - "15672:15672" # management UI
+    # volumes:
+    #   - ./certs:/certs
+    #   - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    hostname: localhost

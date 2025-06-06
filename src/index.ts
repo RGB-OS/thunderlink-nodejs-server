@@ -8,6 +8,7 @@ import { startCronRunner, stopCronRunner } from './jobs/cronRunner';
 import { logger } from './lib/logger';
 import { parseBool } from './utils/parseBool';
 import { wallet } from './lib/wallet';
+import { startRPC } from './rpc';
 
 const app = express();
 const port = process.env.PORT || 4001;
@@ -22,6 +23,7 @@ app.use('/api/invoice', invoiceRoutes);
 app.use('/api/wallet', walletRoutes);
 app.use('/api/webhook', webhookRoutes);
 
+startRPC().catch(console.error);;
 app.listen(port, () => {
   logger.info(`🚀 ThunderLink API running at http://localhost:${port}`);
 });
