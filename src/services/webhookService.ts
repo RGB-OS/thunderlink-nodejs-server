@@ -11,8 +11,8 @@ export const confirmWebhook = async (req: any, res: any) => {
         const invoiceData = {
              invoice
         }
-
-       const psbt = await wallet.sendBegin(invoiceData);
+        
+        const psbt = await wallet.sendBegin(invoiceData);
         console.log('psbt', psbt);
         const signedPsbt = await wallet.signPsbt({ psbtBase64:psbt, mnemonic:mnemonic});
         console.log('signedPsbt', signedPsbt);
