@@ -16,5 +16,7 @@ if (!rgbEndpoint) {
 }
 
 wallet.init(xpub_van,xpub_col, rgbEndpoint,mnemonic);
+console.log('Wallet initialized with xpub_van:', xpub_van, 'and xpub_col:', xpub_col);
+// console.log(wallet)
 
 export { wallet };
