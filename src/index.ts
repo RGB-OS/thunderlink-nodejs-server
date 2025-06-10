@@ -37,7 +37,6 @@ if(parseBool(process.env.ENABLE_CRON)){
 
 const shutdown = async () => {
   logger.info('\n[Server] Shutting down gracefully...');
-
   try {
     stopCronRunner();
     logger.info('[Server] All tasks stopped. Exiting.');
