@@ -15,6 +15,6 @@ if (!rgbEndpoint) {
   throw new Error('RGB_MANAGER_ENDPOINT is missing from environment variables');
 }
 
-wallet.init(xpub_van,xpub_col, rgbEndpoint);
+wallet.init({xpub_van,xpub_col, rgbEndpoint});
 
 export { wallet };

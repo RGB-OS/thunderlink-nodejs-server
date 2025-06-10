@@ -15,7 +15,7 @@ async function listenRPC() {
             channel.ack(msg);
           } catch (err: any) {
             console.error('Client error:', err.message);
-            channel.nack(msg, false, true);
+            channel.nack(msg, false, false);
           }
         
     });

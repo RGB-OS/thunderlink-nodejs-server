@@ -20,7 +20,7 @@ export async function getChannel(): Promise<Channel> {
         // }
     );
     cachedChannel = await conn.createChannel();
-    await cachedChannel.assertQueue('rpc.to-client', { durable: true });
+    // await cachedChannel.assertQueue('rpc.to-client', { durable: true });
     await cachedChannel.assertQueue('rpc.to-server', { durable: true });
     return cachedChannel;
 }

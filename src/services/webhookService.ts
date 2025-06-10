@@ -14,13 +14,11 @@ export const confirmWebhook = async (req: any, res: any) => {
         
         const psbt = await wallet.sendBegin(invoiceData);
         console.log('psbt', psbt);
-        const signedPsbt = await wallet.signPsbt({ psbtBase64:psbt, mnemonic:mnemonic});
+        const signedPsbt = await wallet.signPsbt(psbt);
         console.log('signedPsbt', signedPsbt);
         const finishedPsbt = await wallet.sendEnd({ signed_psbt: signedPsbt });
         console.log('finishedPsbt', finishedPsbt);
 
-        // await wallet.send(invoiceData, process.env.MNEMONIC!);
-        // await wallet.refreshWallet();
         const transfers = await wallet.listTransfers(asset_id);
         const transfer = transfers.find(t => t.recipient_id === recipient_id);
         if (transfer && InvoiceWatcher.shouldWatch(recipient_id, transfer)) {
