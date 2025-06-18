@@ -14,14 +14,22 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@noble/curves": "^1.9.2",
     "amqplib": "^0.10.8",
     "axios": "^1.9.0",
+    "bip32": "^5.0.0-rc.0",
+    "bip39": "^3.1.0",
+    "bitcoinjs-lib": "^6.1.7",
+    "bitcoinjs-message": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
+    "ecpair": "^3.0.0",
     "express": "^5.1.0",
     "pino": "^9.6.0",
     "pino-pretty": "^13.0.0",
-    "rgb-connect-nodejs": "latest"
+    "rgb-connect-nodejs": "file:../thunderlink-client",
+    "tiny-secp256k1": "^2.2.3",
+    "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.7",

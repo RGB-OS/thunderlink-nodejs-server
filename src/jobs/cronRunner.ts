@@ -6,7 +6,7 @@ import { logger } from '../lib/logger';
 const CRON_INTERVAL_SECONDS = parseInt(process.env.CRON_INTERVAL_SECONDS || '60', 10);
 const CRON_INTERVAL_MS = CRON_INTERVAL_SECONDS * 1000;
 
-let cronRunning = true;
+let cronRunning = false;
 let timeoutHandle: NodeJS.Timeout | null = null;
 
 export const startCronRunner = async () => {

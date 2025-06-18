@@ -4,6 +4,7 @@ import cors from 'cors';
 import invoiceRoutes from './routes/invoice';
 import walletRoutes from './routes/wallet';
 import webhookRoutes from './routes/webhooks';
+import authRoutes from './routes/auth';
 import { startCronRunner, stopCronRunner } from './jobs/cronRunner';
 import { logger } from './lib/logger';
 import { parseBool } from './utils/parseBool';
@@ -19,6 +20,7 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', uptime: process.uptime() });
 });
 
+app.use('/api/auth', authRoutes);
 app.use('/api/invoice', invoiceRoutes);
 app.use('/api/wallet', walletRoutes);
 app.use('/api/webhook', webhookRoutes);
