@@ -3,7 +3,6 @@ import { wallet } from '../lib/wallet';
 import { InvoiceWatcher } from './invoiceWatcherManager';
 const mnemonic = process.env.MNEMONIC!;
 export const confirmWebhook = async (req: any, res: any) => {
-
     try {
         // const { invoice } = req.body;
         // const rgbinvoice = await wallet.decodeRGBInvoice({invoice}) as any;
