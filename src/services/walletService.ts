@@ -21,6 +21,29 @@ export const issueAssetNia = async (req: Request, res: Response): Promise<void> 
     const assets = await wallet.issueAssetNia({ticker,name, amounts,precision});
     res.json(assets);
 }
+export const sendBegin = async (req: Request, res: Response): Promise<void> => {
+    const { invoice } = req.body;
+    logger.debug({ body: req.body }, 'send/begin');
+    const rgbinvoice = await wallet.decodeRGBInvoice(invoice);
+    if (!rgbinvoice) {
+        res.status(400).json({ error: 'Invalid invoice' });
+        return;
+    }
+    const psbt = await wallet.sendBegin(rgbinvoice);
+    res.json(psbt);
+}
+
+export const sendEnd = async (req: Request, res: Response): Promise<void> => {
+    const { signed_psbt } = req.body;
+    logger.debug({ body: req.body }, 'send/end');
+    try {
+        await wallet.sendEnd({ signed_psbt });
+        res.json({ message: 'Transaction sent successfully' });
+    } catch (error) {
+        logger.error(error, '[send-end] Error sending transaction:');
+        res.status(500).json({ error: 'Error sending transaction' });
+    }
+}
 export const listAssets = async (req: Request, res: Response): Promise<void> => {
     const assets = await wallet.listAssets();
     res.json(assets);
