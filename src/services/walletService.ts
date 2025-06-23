@@ -22,14 +22,14 @@ export const issueAssetNia = async (req: Request, res: Response): Promise<void> 
     res.json(assets);
 }
 export const sendBegin = async (req: Request, res: Response): Promise<void> => {
-    const { invoice,amount } = req.body;
+    const { invoice,amount,asset_id } = req.body;
     logger.debug({ body: req.body }, 'send/begin');
-    const rgbinvoice = await wallet.decodeRGBInvoice({invoice,amount} as any);
+    const rgbinvoice = await wallet.decodeRGBInvoice({invoice,amount,asset_id} as any);
     if (!rgbinvoice) {
         res.status(400).json({ error: 'Invalid invoice' });
         return;
     }
-    const psbt = await wallet.sendBegin({invoice,amount} as any);
+    const psbt = await wallet.sendBegin({invoice,amount,asset_id} as any);
     res.json(psbt);
 }
 
