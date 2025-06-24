@@ -23,7 +23,6 @@ export const startCronRunner = async () => {
       const unspents = await wallet.listUnspents();
       const unsetteled = getUnsettledUnspents(unspents);
       await handleExpiredTransfers(unsetteled);
-
       await handleCreateUTXO();
 
       logger.info(`[CronRunner] Tasks completed`);
