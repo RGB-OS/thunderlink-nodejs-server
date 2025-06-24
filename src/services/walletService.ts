@@ -37,8 +37,8 @@ export const sendEnd = async (req: Request, res: Response): Promise<void> => {
     const { signed_psbt } = req.body;
     logger.debug({ body: req.body }, 'send/end');
     try {
-        await wallet.sendEnd({ signed_psbt });
-        res.json({ message: 'Transaction sent successfully' });
+        const sendresult = await wallet.sendEnd({ signed_psbt });
+        res.json(sendresult);
     } catch (error) {
         logger.error(error, '[send-end] Error sending transaction:');
         res.status(500).json({ error: 'Error sending transaction' });
