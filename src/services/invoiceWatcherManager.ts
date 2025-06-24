@@ -48,7 +48,7 @@ class InvoiceWatcherManager {
                 }
             }
         } catch (err:any) {
-            logger.error({ err:err?.data ?? err }, `[InvoiceWatcher] Refresh failed for ${recipient_id}`);
+            logger.error({ err:err?.data ?? err }, `[InvoiceWatcher] Refresh failed for ${recipient_id} asset ${asset_id}`);
         }
     }
 
