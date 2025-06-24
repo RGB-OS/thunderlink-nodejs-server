@@ -41,10 +41,10 @@ export const handleExpiredTransfers = async (unsettled: Unspent[]) => {
                         }
                     }
                     // start watching the transfer if some isnt watched
-                    if(InvoiceWatcher.shouldWatch(transfer.recipient_id, transfer)) {
-                        logger.info(`[Expire Transfer] Starting watcher for ${transfer.recipient_id}`);
-                        InvoiceWatcher.startWatcher(transfer.recipient_id, assetId, transfer);
-                    }
+                    // if(InvoiceWatcher.shouldWatch(transfer.recipient_id, transfer)) {
+                    //     logger.info(`[Expire Transfer] Starting watcher for ${transfer.recipient_id}`);
+                    //     InvoiceWatcher.startWatcher(transfer.recipient_id, assetId, transfer);
+                    // }
 
                 }
             }
