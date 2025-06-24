@@ -47,8 +47,8 @@ class InvoiceWatcherManager {
                     this.stopWatcher(recipient_id);
                 }
             }
-        } catch (err) {
-            logger.error({ err }, `[InvoiceWatcher] Refresh failed for ${recipient_id}`);
+        } catch (err:any) {
+            logger.error({ err:err?.data ?? err }, `[InvoiceWatcher] Refresh failed for ${recipient_id}`);
         }
     }
 
