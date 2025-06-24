@@ -6,7 +6,6 @@ import { pendingRequests } from "../rpc/pending";
 import { RpcMessage } from "../types/rpc";
 import { Unspent } from "../types/wallet";
 
-const mnemonic = process.env.MNEMONIC!;
 // const UTXO_LIMIT = parseInt(process.env.UNSETELED_UTXO_LIMIT || '20', 10);
 const UTXO_LIMIT = 30; // Default value for testing
 
