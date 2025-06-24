@@ -13,7 +13,7 @@ export const handleExpiredTransfers = async (unsettled: Unspent[]) => {
     );
     logger.info(`[Expire Transfer] unsettled UTXOs: ${unsettled.length}`);
     const now = Math.floor(Date.now() / 1000);
-
+    let count = 0;
     for (const assetId of assetIds) {
         try {
             const transfers: RgbTransfer[] = await wallet.listTransfers(assetId);
@@ -28,8 +28,9 @@ export const handleExpiredTransfers = async (unsettled: Unspent[]) => {
                         (!transfer.receive_utxo ||
                             transfer.receive_utxo.txid === utxoTxid &&
                             transfer.receive_utxo.vout === utxoVout) &&
-                        transfer.status === TransferStatus.WAITING_COUNTERPARTY &&
-                        transfer.expiration < now
+                        transfer.status === TransferStatus.WAITING_COUNTERPARTY 
+                        // &&
+                        // transfer.expiration < now
                     ) {
                         try {
                             logger.info({ transfer, unspent }, `[Fail Transfer] Batch: ${transfer.batch_transfer_idx}`);
