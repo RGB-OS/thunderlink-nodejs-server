@@ -22,7 +22,7 @@ class InvoiceWatcherManager {
     }
 
     startWatcher(recipient_id: string, asset_id: string, transfer: RgbTransfer) {
-        const timer = setInterval(() => this.refresh(recipient_id, asset_id), 15_000);
+        const timer = setInterval(() => this.refresh(recipient_id, asset_id), 60_000);
         this.watchers[recipient_id] = { transfer, timer };
         logger.info(`[InvoiceWatcher] Started for ${recipient_id}|${asset_id}`);
     }
