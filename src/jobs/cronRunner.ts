@@ -19,6 +19,7 @@ export const startCronRunner = async () => {
     logger.info(`[CronRunner]  Starting with interval ${CRON_INTERVAL_MS / 1000}s Running maintenance tasks at ${new Date().toISOString()}`);
 
     try {
+      
       await wallet.registerWallet()
       const unspents = await wallet.listUnspents();
       const unsetteled = getUnsettledUnspents(unspents);
