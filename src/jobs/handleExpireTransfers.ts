@@ -29,8 +29,8 @@ export const handleExpiredTransfers = async (unsettled: Unspent[]) => {
                             transfer.receive_utxo.txid === utxoTxid &&
                             transfer.receive_utxo.vout === utxoVout) &&
                         transfer.status === TransferStatus.WAITING_COUNTERPARTY 
-                        // &&
-                        // transfer.expiration < now
+                        &&
+                        transfer.expiration < now
                     ) {
                         try {
                             logger.info({ transfer, unspent }, `[Fail Transfer] Batch: ${transfer.batch_transfer_idx}`);
@@ -41,10 +41,10 @@ export const handleExpiredTransfers = async (unsettled: Unspent[]) => {
                         }
                     }
                     // start watching the transfer if some isnt watched
-                    // if(InvoiceWatcher.shouldWatch(transfer.recipient_id, transfer)) {
-                    //     logger.info(`[Expire Transfer] Starting watcher for ${transfer.recipient_id}`);
-                    //     InvoiceWatcher.startWatcher(transfer.recipient_id, assetId, transfer);
-                    // }
+                    if(InvoiceWatcher.shouldWatch(transfer.recipient_id, transfer)) {
+                        logger.info(`[Expire Transfer] Starting watcher for ${transfer.recipient_id}`);
+                        InvoiceWatcher.startWatcher(transfer.recipient_id, assetId, transfer);
+                    }
 
                 }
             }
