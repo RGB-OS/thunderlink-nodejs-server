@@ -9,6 +9,12 @@ const CRON_INTERVAL_MS = CRON_INTERVAL_SECONDS * 1000;
 let cronRunning = true;
 let timeoutHandle: NodeJS.Timeout | null = null;
 
+export const handleWaitingTransfers = async () => {
+  const unspents = await wallet.listUnspents();
+  const unsetteled = getUnsettledUnspents(unspents);
+  await handleExpiredTransfers(unsetteled);
+}
+
 export const startCronRunner = async () => {
   const loop = async () => {
     if (!cronRunning) {
@@ -19,7 +25,7 @@ export const startCronRunner = async () => {
     logger.info(`[CronRunner]  Starting with interval ${CRON_INTERVAL_MS / 1000}s Running maintenance tasks at ${new Date().toISOString()}`);
 
     try {
-      
+
       await wallet.registerWallet()
       const unspents = await wallet.listUnspents();
       const unsetteled = getUnsettledUnspents(unspents);

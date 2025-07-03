@@ -5,6 +5,7 @@ import { wallet } from '../lib/wallet';
 import { logger } from '../lib/logger';
 import { InvoiceWatcher } from './invoiceWatcherManager';
 import { IssueAssetNiaRequestModel } from 'rgb-connect-nodejs';
+import { handleWaitingTransfers } from '../jobs/cronRunner';
 
 export const registerWallet = async (req: Request, res: Response): Promise<void> => {
     const registered = await wallet.registerWallet();
@@ -39,11 +40,20 @@ export const sendEnd = async (req: Request, res: Response): Promise<void> => {
     try {
         const sendresult = await wallet.sendEnd({ signed_psbt });
         res.json(sendresult);
+        setImmediate(async () => {
+            try {
+              await handleWaitingTransfers();
+              logger.info('Post-response transfer handler completed');
+            } catch (err) {
+              logger.error(err, '[send-end] Error in post-response handler');
+            }
+          });
     } catch (error) {
         logger.error(error, '[send-end] Error sending transaction:');
         res.status(500).json({ error: 'Error sending transaction' });
     }
 }
+
 export const listAssets = async (req: Request, res: Response): Promise<void> => {
     const assets = await wallet.listAssets();
     res.json(assets);
