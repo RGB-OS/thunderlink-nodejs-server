@@ -6,6 +6,7 @@ import { logger } from '../lib/logger';
 import { InvoiceWatcher } from './invoiceWatcherManager';
 import { IssueAssetNiaRequestModel } from 'rgb-connect-nodejs';
 import { handleWaitingTransfers } from '../jobs/cronRunner';
+import axios from 'axios';
 
 export const registerWallet = async (req: Request, res: Response): Promise<void> => {
     const registered = await wallet.registerWallet();
@@ -40,17 +41,23 @@ export const sendEnd = async (req: Request, res: Response): Promise<void> => {
     try {
         const sendresult = await wallet.sendEnd({ signed_psbt });
         res.json(sendresult);
+        logger.info({ sendresult }, '[send-end] Transaction sent successfully');
         setImmediate(async () => {
             try {
+                logger.info('start-response transfer handler completed');
               await handleWaitingTransfers();
               logger.info('Post-response transfer handler completed');
             } catch (err) {
               logger.error(err, '[send-end] Error in post-response handler');
             }
           });
-    } catch (error) {
-        logger.error(error, '[send-end] Error sending transaction:');
-        res.status(500).json({ error: 'Error sending transaction' });
+    } catch (error:any) {
+        if (axios.isAxiosError(error) && error.response) {
+            logger.warn({ err: error.response.data }, '[send-end] Forwarded from Manager');
+             res.status(error.response.status).json(error.response.data);
+        }
+        logger.error({error}, '[send-end] Error sending transaction:');
+        res.status(500).json({ error: error?.message ?? 'Error sending transaction' });
     }
 }
 
