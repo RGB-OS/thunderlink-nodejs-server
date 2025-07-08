@@ -35,8 +35,8 @@ export const handleExpiredTransfers = async (unsettled: Unspent[]) => {
                         try {
                             logger.info({ transfer, unspent }, `[Fail Transfer] Batch: ${transfer.batch_transfer_idx}`);
                             await wallet.failTransfers({ batch_transfer_idx: transfer.batch_transfer_idx });
-                        } catch (error) {
-                            logger.error(`[Fail Transfer Error] Batch: ${transfer.batch_transfer_idx}`, error);
+                        } catch (error:any) {
+                            logger.error(`[Fail Transfer Error] Batch: ${transfer.batch_transfer_idx}`, error?.data ?? error);
                             throw error; // rethrow the error to be handled by the caller
                         }
                     }

@@ -35,10 +35,10 @@ export const sendBegin = async (req: Request, res: Response): Promise<void> => {
     res.json(psbt);
 }
 
-export const sendEnd = async (req: Request, res: Response): Promise<void> => {
+export const sendEnd = async (req: Request, res: Response): Promise<any> => {
     const { signed_psbt } = req.body;
     logger.debug({ body: req.body }, 'send/end');
-    try {
+    // try {
         const sendresult = await wallet.sendEnd({ signed_psbt });
         res.json(sendresult);
         logger.info({ sendresult }, '[send-end] Transaction sent successfully');
@@ -51,14 +51,14 @@ export const sendEnd = async (req: Request, res: Response): Promise<void> => {
               logger.error(err, '[send-end] Error in post-response handler');
             }
           });
-    } catch (error:any) {
-        if (axios.isAxiosError(error) && error.response) {
-            logger.warn({ err: error.response.data }, '[send-end] Forwarded from Manager');
-             res.status(error.response.status).json(error.response.data);
-        }
-        logger.error({error}, '[send-end] Error sending transaction:');
-        res.status(500).json({ error: error?.message ?? 'Error sending transaction' });
-    }
+    // } catch (error:any) {
+    //     if (axios.isAxiosError(error) && error.response) {
+    //         logger.warn({ err: error.response.data }, '[send-end] Forwarded from Manager');
+    //          res.status(error.response.status).json(error.response.data);
+    //     }
+    //     logger.error({error}, '[send-end] Error sending transaction:');
+    //     return res.status(500).json({ error: error?.message ?? 'Error sending transaction' });
+    // }
 }
 
 export const listAssets = async (req: Request, res: Response): Promise<void> => {
