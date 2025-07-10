@@ -37,7 +37,7 @@ export const handleExpiredTransfers = async (unsettled: Unspent[]) => {
                             await wallet.failTransfers({ batch_transfer_idx: transfer.batch_transfer_idx });
                         } catch (error:any) {
                             logger.error(`[Fail Transfer Error] Batch: ${transfer.batch_transfer_idx}`, error?.data ?? error);
-                            throw error; // rethrow the error to be handled by the caller
+                            // throw error; // rethrow the error to be handled by the caller
                         }
                     }
                     // start watching the transfer if some isnt watched
@@ -50,7 +50,7 @@ export const handleExpiredTransfers = async (unsettled: Unspent[]) => {
             }
         } catch (err) {
             logger.error({ err, assetId }, `[Expire Transfer] Failed to list transfers for asset`);
-            throw err; // rethrow the error to be handled by the caller
+            // throw err; // rethrow the error to be handled by the caller
         }
     }
 }
