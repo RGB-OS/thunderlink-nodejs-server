@@ -10,6 +10,11 @@ import { parseBool } from './utils/parseBool';
 import { wallet } from './lib/wallet';
 import { startRPC } from './rpc';
 
+import https from 'https';
+import fs from 'fs';
+
+const enableMTLS = process.env.ENABLE_MTLS;
+
 const app = express();
 const port = process.env.PORT || 4001;
 
@@ -23,10 +28,28 @@ app.use('/api/invoice', invoiceRoutes);
 app.use('/api/wallet', walletRoutes);
 app.use('/api/webhook', webhookRoutes);
 
-startRPC().catch(console.error);;
-app.listen(port, () => {
-  logger.info(`🚀 ThunderLink API running at http://localhost:${port}`);
-});
+startRPC().catch(console.error);
+
+if (enableMTLS) {
+  const httpsOptions = {
+    key: fs.readFileSync(process.env.SERVER_KEY_PATH || 'server.key'),
+    cert: fs.readFileSync(process.env.SERVER_CERT_PATH || 'server.crt'),
+    ca: fs.readFileSync(process.env.CA_CERT_PATH || 'ca.crt'),
+    requestCert: true,
+    rejectUnauthorized: true,
+  };
+
+  https.createServer(httpsOptions, app).listen(port, () => {
+    logger.info(`🔐 ThunderLink API (mTLS) running at https://localhost:${port}`);
+  });
+} else {
+  app.listen(port, () => {
+    logger.info(`🚀 ThunderLink API running at http://localhost:${port}`);
+  });
+}
+// app.listen(port, () => {
+//   logger.info(`🚀 ThunderLink API running at http://localhost:${port}`);
+// });
 
 
 if(parseBool(process.env.ENABLE_CRON)){
