@@ -19,19 +19,19 @@ export const decodeRGBInvoice = async (req: Request, res: Response): Promise<voi
 
 }
 export const issueAssetNia = async (req: Request, res: Response): Promise<void> => {
-    const {ticker,name, amounts,precision} = req.body as IssueAssetNiaRequestModel;
-    const assets = await wallet.issueAssetNia({ticker,name, amounts,precision});
+    const { ticker, name, amounts, precision } = req.body as IssueAssetNiaRequestModel;
+    const assets = await wallet.issueAssetNia({ ticker, name, amounts, precision });
     res.json(assets);
 }
 export const sendBegin = async (req: Request, res: Response): Promise<void> => {
-    const { invoice,amount,asset_id } = req.body;
+    const { invoice, amount, asset_id } = req.body;
     logger.debug({ body: req.body }, 'send/begin');
-    const rgbinvoice = await wallet.decodeRGBInvoice({invoice,amount,asset_id} as any);
+    const rgbinvoice = await wallet.decodeRGBInvoice({ invoice, amount, asset_id } as any);
     if (!rgbinvoice) {
         res.status(400).json({ error: 'Invalid invoice' });
         return;
     }
-    const psbt = await wallet.sendBegin({invoice,amount,asset_id} as any);
+    const psbt = await wallet.sendBegin({ invoice, amount, asset_id } as any);
     res.json(psbt);
 }
 
@@ -39,18 +39,18 @@ export const sendEnd = async (req: Request, res: Response): Promise<any> => {
     const { signed_psbt } = req.body;
     logger.debug({ body: req.body }, 'send/end');
     // try {
-        const sendresult = await wallet.sendEnd({ signed_psbt });
-        res.json(sendresult);
-        logger.info({ sendresult }, '[send-end] Transaction sent successfully');
-        setImmediate(async () => {
-            try {
-                logger.info('start-response transfer handler completed');
-              await handleWaitingTransfers();
-              logger.info('Post-response transfer handler completed');
-            } catch (err) {
-              logger.error(err, '[send-end] Error in post-response handler');
-            }
-          });
+    const sendresult = await wallet.sendEnd({ signed_psbt });
+    res.json(sendresult);
+    logger.info({ sendresult }, '[send-end] Transaction sent successfully');
+    setImmediate(async () => {
+        try {
+            logger.info('start-response transfer handler completed');
+            await handleWaitingTransfers();
+            logger.info('Post-response transfer handler completed');
+        } catch (err) {
+            logger.error(err, '[send-end] Error in post-response handler');
+        }
+    });
     // } catch (error:any) {
     //     if (axios.isAxiosError(error) && error.response) {
     //         logger.warn({ err: error.response.data }, '[send-end] Forwarded from Manager');
@@ -141,4 +141,10 @@ export const listTransfers = async (req: Request, res: Response): Promise<void> 
 export const refreshWallet = async (req: Request, res: Response): Promise<void> => {
     await wallet.refreshWallet();
     res.json({ message: 'Wallet refreshed' });
+}
+
+export const estimatefee = async (req: Request, res: Response): Promise<void> => {
+    res.json({
+        "fee_rate": 5.0
+    });
 }
