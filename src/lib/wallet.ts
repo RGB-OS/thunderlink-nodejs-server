@@ -4,7 +4,7 @@ const xpub_van = process.env.XPUB_VAN!;
 const xpub_col = process.env.XPUB_COL!;
 const rgbEndpoint = process.env.RGB_MANAGER_ENDPOINT;
 const master_fingerprint=  process.env.MASTER_FINGERPRINT!
-const network =  process.env.BITCOIN_NETWORK!
+const network = parseInt(process.env.BITCOIN_NETWORK!, 3);
 
 if(!master_fingerprint){
   throw new Error('MASTER_FINGERPRINT is missing from environment variables');
