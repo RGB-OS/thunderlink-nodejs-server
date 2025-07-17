@@ -10,6 +10,7 @@ let cronRunning = true;
 let timeoutHandle: NodeJS.Timeout | null = null;
 
 export const handleWaitingTransfers = async () => {
+  await wallet.refreshWallet();
   const unspents = await wallet.listUnspents();
   const unsetteled = getUnsettledUnspents(unspents);
   await handleExpiredTransfers(unsetteled);
