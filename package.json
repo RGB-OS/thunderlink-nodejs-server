@@ -21,7 +21,7 @@
     "express": "^5.1.0",
     "pino": "^9.6.0",
     "pino-pretty": "^13.0.0",
-    "rgb-connect-nodejs": "1.0.20"
+    "rgb-connect-nodejs": "1.0.21"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.7",
