@@ -5,6 +5,7 @@ const xpub_col = process.env.XPUB_COL!;
 const rgbEndpoint = process.env.RGB_MANAGER_ENDPOINT;
 const master_fingerprint=  process.env.MASTER_FINGERPRINT!
 const network = process.env.BITCOIN_NETWORK!;
+
 console.log("BITCOIN_NETWORK raw",network)
 if (!network) throw new Error("BITCOIN_NETWORK is not set");
 
