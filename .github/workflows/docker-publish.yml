@@ -3,7 +3,7 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - prod
+      - main
 
 jobs:
   docker:
@@ -27,7 +27,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: thunderstack/thunderlink-nodejs-server:prod
+          tags: thunderstack/thunderlink-nodejs-server:main
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
