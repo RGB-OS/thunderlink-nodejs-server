@@ -6,8 +6,8 @@ import { pendingRequests } from "../rpc/pending";
 import { RpcMessage } from "../types/rpc";
 import { Unspent } from "../types/wallet";
 
-// const UTXO_LIMIT = parseInt(process.env.UNSETELED_UTXO_LIMIT || '20', 10);
-const UTXO_LIMIT = 50; // Default value for testing
+const UTXO_LIMIT = parseInt(process.env.UNSETELED_UTXO_LIMIT || '10', 10);
+// const UTXO_LIMIT = 50; // Default value for testing
 
 export const handleCreateUTXO = async () => {
     const unspents = await wallet.listUnspents();
