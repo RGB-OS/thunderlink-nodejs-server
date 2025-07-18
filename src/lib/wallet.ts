@@ -6,12 +6,14 @@ const rgbEndpoint = process.env.RGB_MANAGER_ENDPOINT;
 const master_fingerprint=  process.env.MASTER_FINGERPRINT!
 
 const raw = process.env.BITCOIN_NETWORK;
+console.log("BITCOIN_NETWORK raw",raw)
 if (!raw) throw new Error("BITCOIN_NETWORK is not set");
 
-const network = parseInt(raw, 3);
+const network = parseInt(raw, 10);
+console.log("network raw",network)
 if (isNaN(network)) throw new Error(`Invalid BITCOIN_NETWORK: ${raw}`);
-console.log("BITCOIN_NETWORK raw",raw)
-console.log("BITCOIN_NETWORK raw",network)
+
+
 if(!master_fingerprint){
   throw new Error('MASTER_FINGERPRINT is missing from environment variables');
 }
