@@ -11,9 +11,7 @@ let timeoutHandle: NodeJS.Timeout | null = null;
 
 export const handleWaitingTransfers = async () => {
   await wallet.refreshWallet();
-  const unspents = await wallet.listUnspents();
-  const unsetteled = getUnsettledUnspents(unspents);
-  await handleExpiredTransfers(unsetteled);
+  await handleExpiredTransfers();
 }
 
 export const startCronRunner = async () => {
@@ -27,10 +25,8 @@ export const startCronRunner = async () => {
 
     try {
 
-      await wallet.registerWallet()
-      const unspents = await wallet.listUnspents();
-      const unsetteled = getUnsettledUnspents(unspents);
-      await handleExpiredTransfers(unsetteled);
+      await wallet.registerWallet();
+      await handleExpiredTransfers();
       await handleCreateUTXO();
 
       logger.info(`[CronRunner] Tasks completed`);
