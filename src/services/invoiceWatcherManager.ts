@@ -7,9 +7,14 @@ type Watcher = {
     transfer: RgbTransfer;
     timer: NodeJS.Timeout;
 };
-
+type CachedTransfers = {
+    data: RgbTransfer[];
+    timestamp: number; // in milliseconds
+};
 class InvoiceWatcherManager {
     private watchers: Record<string, Watcher> = {};
+    private transfersCache: Map<string, CachedTransfers> = new Map();
+    private cacheTTL = 40_000; // 40 seconds
 
     shouldWatch(recipient_id: string, transfer?: RgbTransfer): boolean {
         if (this.watchers[recipient_id]) return false; // already watching
@@ -36,10 +41,25 @@ class InvoiceWatcherManager {
         logger.info(`[InvoiceWatcher] Stopped for ${recipient_id}`);
     }
 
+
+    async getTransfers(asset_id: string): Promise<RgbTransfer[]> {
+        const now = Date.now();
+        const cached = this.transfersCache.get(asset_id);
+
+        if (cached && (now - cached.timestamp < this.cacheTTL)) {
+            return cached.data;
+        }
+
+        await wallet.refreshWallet();
+        const fresh = await wallet.listTransfers(asset_id);
+        this.transfersCache.set(asset_id, { data: fresh, timestamp: now });
+
+        return fresh;
+    }
+
     async refresh(recipient_id: string, asset_id: string) {
         try {
-            await wallet.refreshWallet();
-            const transfers = await wallet.listTransfers(asset_id);
+            const transfers = await this.getTransfers(asset_id);
             const updated = transfers.find(t => t.recipient_id === recipient_id);
             if (updated&&this.isWatching(recipient_id)) {
                 this.watchers[recipient_id].transfer = updated;
