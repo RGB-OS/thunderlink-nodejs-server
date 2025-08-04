@@ -1,9 +1,5 @@
 import axios from "axios";
-import { notificationTemplate } from "../utils/notificationTemplate";
-export enum NotificationType {
-    InsufficientBTC = 'insufficient-btc',
-    LowAssetBalance = 'low-asset-balance',
-}
+import { notificationTemplate, NotificationType } from "../utils/notificationTemplate";
 
 
 class NotificationService {

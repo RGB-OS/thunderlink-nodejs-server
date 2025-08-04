@@ -2,8 +2,9 @@ import { wallet } from '../lib/wallet';
 import { handleExpiredTransfers } from './handleExpireTransfers';
 import { getUnsettledUnspents, handleCreateUTXO } from './handleCreateUTXO';
 import { logger } from '../lib/logger';
-import { notificationService, NotificationType } from '../services/notification';
+import { notificationService } from '../services/notification';
 import { AssetNia } from '../types/wallet';
+import { NotificationType } from '../utils/notificationTemplate';
 
 const CRON_INTERVAL_SECONDS = parseInt(process.env.CRON_INTERVAL_SECONDS || '60', 10);
 const CRON_INTERVAL_MS = CRON_INTERVAL_SECONDS * 1000;

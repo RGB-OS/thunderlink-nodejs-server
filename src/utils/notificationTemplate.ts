@@ -1,7 +1,13 @@
-import { NotificationType } from "../services/notification";
+
+
 import { AssetNia } from "../types/wallet";
 import { formatTokenAmount } from "./formatTokenAmount";
 const network = process.env.BITCOIN_NETWORK;
+
+export enum NotificationType {
+    InsufficientBTC = 'insufficient-btc',
+    LowAssetBalance = 'low-asset-balance',
+}
 
 export const notificationTemplate = {
 
