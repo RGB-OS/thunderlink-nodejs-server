@@ -53,9 +53,9 @@ export const startCronRunner = async () => {
     logger.info(`[CronRunner]  Starting with interval ${CRON_INTERVAL_MS / 1000}s Running maintenance tasks at ${new Date().toISOString()}`);
 
     try {
+      await wallet.registerWallet();
       await motitorBTCBalance();
       await motitorAssetBalance();
-      await wallet.registerWallet();
       await handleExpiredTransfers();
       await handleCreateUTXO();
 
