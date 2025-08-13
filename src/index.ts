@@ -64,7 +64,7 @@ const shutdown = async () => {
     stopCronRunner();
     logger.info('[Server] All tasks stopped. Exiting.');
     process.exit(0);
-  } catch (error) {
+  } catch (error:any) {
     logger.error('[Server] Error during shutdown', error);
     process.exit(1);
   }
