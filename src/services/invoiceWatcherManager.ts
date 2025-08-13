@@ -14,7 +14,7 @@ type CachedTransfers = {
 class InvoiceWatcherManager {
     private watchers: Record<string, Watcher> = {};
     private transfersCache: Map<string, CachedTransfers> = new Map();
-    private cacheTTL = 40_000; // 40 seconds
+    private cacheTTL = 90_000; // 60 seconds
 
     shouldWatch(recipient_id: string, transfer?: RgbTransfer): boolean {
         if (this.watchers[recipient_id]) return false; // already watching
@@ -27,7 +27,7 @@ class InvoiceWatcherManager {
     }
 
     startWatcher(recipient_id: string, asset_id: string, transfer: RgbTransfer) {
-        const timer = setInterval(() => this.refresh(recipient_id, asset_id), 60_000);
+        const timer = setInterval(() => this.refresh(recipient_id, asset_id), 100_000);
         this.watchers[recipient_id] = { transfer, timer };
         logger.info(`[InvoiceWatcher] Started for ${recipient_id}|${asset_id}`);
     }
