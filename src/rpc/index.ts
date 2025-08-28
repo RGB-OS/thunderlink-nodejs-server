@@ -61,7 +61,7 @@ async function listenRPC() {
         });
         
         consumerTag = result.consumerTag;
-        logger.info({ consumerTag }, 'RPC server is listening for messages...');
+        logger.info({ consumerTag }, 'RPC v2 refactored server is listening for messages...');
     } catch (error) {
         logger.error({ error: String(error) }, 'Error setting up RPC listener');
         isListening = false;
