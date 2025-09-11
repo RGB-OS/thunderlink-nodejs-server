@@ -32,7 +32,7 @@ export const methodHandlers: Record<string, (msg: RpcMessage, channel: Channel) 
   'send-end': async (msg, ch) => {
     try {
       const signedPsbt = msg.payload;
-      // await wallet.sendEnd({ signed_psbt: signedPsbt });
+      await wallet.sendEnd({ signed_psbt: signedPsbt });
       logger.info(`[Send] Successfully sent transaction. txId: ${msg.txId}`);
     } catch (error: any) {
       logger.error(error?.data || error, '[to-server.send-end] Error sending transaction:');
@@ -47,7 +47,7 @@ export const methodHandlers: Record<string, (msg: RpcMessage, channel: Channel) 
   'create-utxo-end': async (msg, ch) => {
     try {
       const signedPsbt = msg.payload;
-      // await wallet.createUtxosEnd({ signedPsbt });
+      await wallet.createUtxosEnd({ signedPsbt });
       logger.info(`[UTXO Checker] Successfully created UTXOs. txId: ${msg.txId}`);
     } catch (error: any) {
       logger.error(error?.data || error, '[to-server.create-utxo-end] Error creating UTXOs:');
