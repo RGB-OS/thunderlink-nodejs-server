@@ -20,7 +20,7 @@ export const motitorBTCBalance = async () => {
   const balance = await wallet.getBtcBalance();
   const address = await wallet.getAddress();
   const minBalance = parseInt(process.env.MIN_BTC_BALANCE || '10000', 10); 
-  console.log('balance', balance.vanilla);
+  console.log('balance ', balance.vanilla);
   if (balance.vanilla.spendable < minBalance) {
     logger.warn(`[BTC Balance Monitor] Low BTC Balance: ${balance} sats, below minimum threshold of ${minBalance} sats.`);
     notificationService.notify(NotificationType.InsufficientBTC, {balance:balance.vanilla,address});
