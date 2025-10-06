@@ -16,7 +16,6 @@ async function listenRPC() {
         isListening = true;
         const channel = await getChannel();
         
-        // Handle channel errors and reconnection
         channel.on('error', async (err: Error) => {
             logger.error({ err }, 'RPC channel error');
             consumerTag = null;

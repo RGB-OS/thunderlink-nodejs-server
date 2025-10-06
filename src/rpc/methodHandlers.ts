@@ -47,6 +47,7 @@ export const methodHandlers: Record<string, (msg: RpcMessage, channel: Channel) 
   'create-utxo-end': async (msg, ch) => {
     try {
       const signedPsbt = msg.payload;
+      logger.info(`[UTXO Checker] Finalizing UTXO creation. txId: ${msg.txId}`);
       await wallet.createUtxosEnd({ signedPsbt });
       logger.info(`[UTXO Checker] Successfully created UTXOs. txId: ${msg.txId}`);
     } catch (error: any) {
