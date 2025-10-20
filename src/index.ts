@@ -8,7 +8,8 @@ import { startCronRunner, stopCronRunner } from './jobs/cronRunner';
 import { logger } from './lib/logger';
 import { parseBool } from './utils/parseBool';
 import { wallet } from './lib/wallet';
-import { startRPC } from './rpc';
+import { startRPC, stopRPC } from './rpc';
+import { closeChannel } from './rpc/channel';
 
 import https from 'https';
 import fs from 'fs';
@@ -22,6 +23,25 @@ app.use(cors());
 app.use(express.json());
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', uptime: process.uptime() });
+});
+
+app.get('/health/rabbitmq', async (req, res) => {
+  try {
+    const { getChannel } = await import('./rpc/channel');
+    const channel = await getChannel();
+    res.status(200).json({ 
+      status: 'ok', 
+      rabbitmq: 'connected',
+      uptime: process.uptime() 
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: 'error', 
+      rabbitmq: 'disconnected',
+      error: String(error),
+      uptime: process.uptime() 
+    });
+  }
 });
 
 app.use('/api/invoice', invoiceRoutes);
@@ -62,6 +82,8 @@ const shutdown = async () => {
   logger.info('\n[Server] Shutting down gracefully...');
   try {
     stopCronRunner();
+    await stopRPC();
+    await closeChannel();
     logger.info('[Server] All tasks stopped. Exiting.');
     process.exit(0);
   } catch (error:any) {

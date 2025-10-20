@@ -27,7 +27,7 @@ export const methodHandlers: Record<string, (msg: RpcMessage, channel: Channel) 
     const rgbinvoice = await wallet.decodeRGBInvoice(invoiceData) as any;
     console.log('rgbinvoice', rgbinvoice);
     const psbt = await wallet.sendBegin(invoiceData);
-    sendToClient(ch, 'sign', psbt, msg.txId, 'send-end');
+    sendToClient('sign', psbt, msg.txId, 'send-end');
   },
   'send-end': async (msg, ch) => {
     try {
@@ -37,28 +37,35 @@ export const methodHandlers: Record<string, (msg: RpcMessage, channel: Channel) 
     } catch (error: any) {
       logger.error(error?.data || error, '[to-server.send-end] Error sending transaction:');
     }
-    sendToClient(ch, 'send-end', 'Transaction sent successfully', msg.txId);
+    sendToClient('send-end', 'Transaction sent successfully', msg.txId);
   },
   'create-utxo-begin': async (msg, ch) => {
     const params = JSON.parse(msg.payload);
     const psbtBase64 = await wallet.createUtxosBegin(params);
-    sendToClient(ch, 'sign', psbtBase64, msg.txId, 'create-utxo-end');
+    sendToClient('sign', psbtBase64, msg.txId, 'create-utxo-end');
   },
   'create-utxo-end': async (msg, ch) => {
     try {
       const signedPsbt = msg.payload;
+      logger.info(`[UTXO Checker] Finalizing UTXO creation. txId: ${msg.txId}`);
       await wallet.createUtxosEnd({ signedPsbt });
       logger.info(`[UTXO Checker] Successfully created UTXOs. txId: ${msg.txId}`);
     } catch (error: any) {
       logger.error(error?.data || error, '[to-server.create-utxo-end] Error creating UTXOs:');
     }
-    sendToClient(ch, 'create-utxo-end', 'UTXO created successfully', msg.txId);
+    sendToClient('create-utxo-end', 'UTXO created successfully', msg.txId);
   }
   ,
 };
 
-export function sendToClient(channel: Channel, method: string, payload: string, txId: string, next: string = ''): void {
-  const msg: RpcMessage = { txId, method, payload, next };
-  console.log('sendToClient:', msg);
-  channel.sendToQueue('rpc.to-client', Buffer.from(JSON.stringify(msg)), { persistent: true });
+export async function sendToClient(method: string, payload: string, txId: string, next: string = ''): Promise<void> {
+  try {
+    const sendChannel = await getChannel();
+    const msg: RpcMessage = { txId, method, payload, next };
+    console.log('sendToClient:', msg);
+    await sendChannel.sendToQueue('rpc.to-client', Buffer.from(JSON.stringify(msg)), { persistent: true });
+  } catch (error) {
+    logger.error({ error: String(error) }, 'Error sending message to client');
+    throw error;
+  }
 }
