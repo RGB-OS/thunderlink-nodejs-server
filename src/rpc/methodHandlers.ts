@@ -16,7 +16,6 @@ export const InvokeRPCMethod = async (
     payload: JSON.stringify(payload)
   };
   const handler = methodHandlers[method];
-
   if (handler) await handler(msg, channel);
   else console.warn('No handler for method:', method);
 };
