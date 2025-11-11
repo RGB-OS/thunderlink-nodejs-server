@@ -2,6 +2,7 @@ import { wallet } from '../lib/wallet';
 import { RgbTransfer, TransferKind, TransferStatus } from '../types/wallet';
 import { decodeInvoice } from '../utils/decodeInvoice';
 import { logger } from '../lib/logger';
+import { DURATION_RCV_TRANSFER } from '../jobs/handleExpireTransfers';
 
 type Watcher = {
     transfer: RgbTransfer;
@@ -23,6 +24,7 @@ class InvoiceWatcherManager {
 
         const now = Math.floor(Date.now() / 1000);
         if (transfer.expiration < now && transfer.kind === TransferKind.RECEIVE_BLIND) return false; // expired transfer
+        if (transfer.expiration + DURATION_RCV_TRANSFER < now) return false; // expired for more than 24 hours transfer
         return true;
     }
 

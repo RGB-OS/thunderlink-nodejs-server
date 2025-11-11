@@ -4,6 +4,7 @@ import { AssetNia, RgbTransfer, TransferKind, TransferStatus, Unspent } from "..
 import { logger } from "../lib/logger";
 import { InvoiceWatcher } from "../services/invoiceWatcherManager";
 
+export const DURATION_RCV_TRANSFER = 24 * 60 * 60; // 24 hours
 export const handleExpiredTransfers = async () => {
 
     const listAssets = await wallet.listAssets();
@@ -26,7 +27,7 @@ export const handleExpiredTransfers = async () => {
                     &&
                     transfer.expiration &&
                     transfer.expiration < now
-                    && transfer.kind === TransferKind.RECEIVE_BLIND // only blind recive transfers
+                    && (transfer.kind === TransferKind.RECEIVE_BLIND || transfer.expiration + DURATION_RCV_TRANSFER < now) 
 
                 ) {
                     try {
