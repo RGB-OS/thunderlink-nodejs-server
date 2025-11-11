@@ -25,24 +25,24 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', uptime: process.uptime() });
 });
 
-app.get('/health/rabbitmq', async (req, res) => {
-  try {
-    const { getChannel } = await import('./rpc/channel');
-    const channel = await getChannel();
-    res.status(200).json({ 
-      status: 'ok', 
-      rabbitmq: 'connected',
-      uptime: process.uptime() 
-    });
-  } catch (error) {
-    res.status(500).json({ 
-      status: 'error', 
-      rabbitmq: 'disconnected',
-      error: String(error),
-      uptime: process.uptime() 
-    });
-  }
-});
+// app.get('/health/rabbitmq', async (req, res) => {
+//   try {
+//     const { getChannel } = await import('./rpc/channel');
+//     const channel = await getChannel();
+//     res.status(200).json({ 
+//       status: 'ok', 
+//       rabbitmq: 'connected',
+//       uptime: process.uptime() 
+//     });
+//   } catch (error) {
+//     res.status(500).json({ 
+//       status: 'error', 
+//       rabbitmq: 'disconnected',
+//       error: String(error),
+//       uptime: process.uptime() 
+//     });
+//   }
+// });
 
 app.use('/api/invoice', invoiceRoutes);
 app.use('/api/wallet', walletRoutes);

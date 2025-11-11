@@ -84,7 +84,7 @@ export const failTransfers = async (req: Request, res: Response): Promise<void> 
 export const createInvoice = async (req: Request, res: Response): Promise<void> => {
     logger.debug({ body: req.body }, 'invoice/create');
     const { asset_id, amount } = req.body;
-    const invoice = await wallet.blindRecive({ asset_id, amount });
+    const invoice = await wallet.blindReceive({ asset_id, amount });
     logger.info({ invoice }, 'Invoice created');
     const { recipient_id } = invoice;
     const { asset_id: decodedAssetId } = decodeInvoice(invoice.invoice);

@@ -1,13 +1,12 @@
-import { listAssets } from './../services/walletService';
-import { wallet } from "rgb-connect-nodejs";
-import { AssetNia, RgbTransfer, TransferStatus, Unspent } from "../types/wallet";
+import { wallet, AssetNIA } from "rgb-connect-nodejs";
+import { RgbTransfer, TransferStatus, Unspent } from "../types/wallet";
 import { logger } from "../lib/logger";
 import { InvoiceWatcher } from "../services/invoiceWatcherManager";
 
 export const handleExpiredTransfers = async () => {
 
     const listAssets = await wallet.listAssets();
-    const assetIds = listAssets.nia?.map((asset) => (asset as unknown as AssetNia).asset_id);
+    const assetIds = listAssets.nia?.map((asset: AssetNIA) => asset.assetId);
 
 
     if (!assetIds || assetIds.length === 0) {
