@@ -1,5 +1,5 @@
 import { wallet } from '../lib/wallet';
-import { RgbTransfer, TransferStatus } from '../types/wallet';
+import { RgbTransfer, TransferKind, TransferStatus } from '../types/wallet';
 import { decodeInvoice } from '../utils/decodeInvoice';
 import { logger } from '../lib/logger';
 
@@ -22,7 +22,7 @@ class InvoiceWatcherManager {
         if (!transfer || [TransferStatus.FAILED, TransferStatus.SETTLED].includes(transfer.status)) return false; // no transfer to watch
 
         const now = Math.floor(Date.now() / 1000);
-        if (transfer.expiration < now) return false; // expired transfer
+        if (transfer.expiration < now && transfer.kind === TransferKind.RECEIVE_BLIND) return false; // expired transfer
         return true;
     }
 
@@ -61,14 +61,14 @@ class InvoiceWatcherManager {
         try {
             const transfers = await this.getTransfers(asset_id);
             const updated = transfers.find(t => t.recipient_id === recipient_id);
-            if (updated&&this.isWatching(recipient_id)) {
+            if (updated && this.isWatching(recipient_id)) {
                 this.watchers[recipient_id].transfer = updated;
                 if ([TransferStatus.SETTLED, TransferStatus.FAILED].includes(updated.status)) {
                     this.stopWatcher(recipient_id);
                 }
             }
-        } catch (err:any) {
-            logger.error({ err:err?.data ?? err }, `[InvoiceWatcher] Refresh failed for ${recipient_id} asset ${asset_id}`);
+        } catch (err: any) {
+            logger.error({ err: err?.data ?? err }, `[InvoiceWatcher] Refresh failed for ${recipient_id} asset ${asset_id}`);
         }
     }
 

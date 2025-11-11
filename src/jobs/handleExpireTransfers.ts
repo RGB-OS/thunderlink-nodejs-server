@@ -1,6 +1,6 @@
 import { listAssets } from './../services/walletService';
 import { wallet } from "rgb-connect-nodejs";
-import { AssetNia, RgbTransfer, TransferStatus, Unspent } from "../types/wallet";
+import { AssetNia, RgbTransfer, TransferKind, TransferStatus, Unspent } from "../types/wallet";
 import { logger } from "../lib/logger";
 import { InvoiceWatcher } from "../services/invoiceWatcherManager";
 
@@ -16,7 +16,7 @@ export const handleExpiredTransfers = async () => {
     }
     const now = Math.floor(Date.now() / 1000);
     for (const assetId of assetIds) {
-        console.log(`[Expire Transfer] Processing asset: ${assetId}`);
+        console.log(`[Expire Transfer] Processing asset: ${assetId} - time: ${now}`);
         try {
             const transfers: RgbTransfer[] = await wallet.listTransfers(assetId);
             for (const transfer of transfers) {
@@ -26,6 +26,8 @@ export const handleExpiredTransfers = async () => {
                     &&
                     transfer.expiration &&
                     transfer.expiration < now
+                    && transfer.kind === TransferKind.RECEIVE_BLIND // only blind recive transfers
+
                 ) {
                     try {
                         logger.info({ transfer }, `[Fail Transfer] Batch: ${transfer.batch_transfer_idx}`);

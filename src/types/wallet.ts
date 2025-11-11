@@ -25,6 +25,13 @@ export enum TransferStatus {
   SETTLED,
   FAILED,
 }
+export enum TransferKind {
+  ISSUANCE = 0,
+  RECEIVE_BLIND,
+  RECEIVE_WITNESS,
+  SEND
+}
+
 export interface Unspent {
   utxo: Utxo;
   rgb_allocations: RgbAllocation[];
