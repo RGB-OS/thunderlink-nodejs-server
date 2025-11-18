@@ -1,6 +1,5 @@
-import { listAssets } from './../services/walletService';
-import { wallet } from "rgb-connect-nodejs";
-import { AssetNia, RgbTransfer, TransferKind, TransferStatus, Unspent } from "../types/wallet";
+import { wallet, AssetNIA } from "rgb-sdk";
+import { RgbTransfer, TransferStatus, Unspent,TransferKind } from "../types/wallet";
 import { logger } from "../lib/logger";
 import { InvoiceWatcher } from "../services/invoiceWatcherManager";
 
@@ -8,7 +7,7 @@ export const DURATION_RCV_TRANSFER = 24 * 60 * 60; // 24 hours
 export const handleExpiredTransfers = async () => {
 
     const listAssets = await wallet.listAssets();
-    const assetIds = listAssets.nia?.map((asset) => (asset as unknown as AssetNia).asset_id);
+    const assetIds = listAssets.nia?.map((asset: AssetNIA) => asset.asset_id!);
 
 
     if (!assetIds || assetIds.length === 0) {

@@ -8,6 +8,7 @@ let heartbeatInterval: NodeJS.Timeout | null = null;
 const RABBITMQ_URL = process.env.RABBITMQ_CONNECTION_URL!;
 
 if (!RABBITMQ_URL) {
+     
     throw new Error('RABBITMQ_CONNECTION_URL environment variable is not set');
 }
 

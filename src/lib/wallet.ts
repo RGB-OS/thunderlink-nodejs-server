@@ -1,10 +1,11 @@
-import { wallet } from 'rgb-connect-nodejs';
+import { createWalletManager, WalletManager } from 'rgb-sdk';
 
 const xpub_van = process.env.XPUB_VAN!;
 const xpub_col = process.env.XPUB_COL!;
 const rgbEndpoint = process.env.RGB_MANAGER_ENDPOINT;
 const master_fingerprint=  process.env.MASTER_FINGERPRINT!
 const network = process.env.BITCOIN_NETWORK!;
+
 
 console.log("BITCOIN_NETWORK raw",network)
 if (!network) throw new Error("BITCOIN_NETWORK is not set");
@@ -22,6 +23,6 @@ if (!rgbEndpoint) {
   throw new Error('RGB_MANAGER_ENDPOINT is missing from environment variables');
 }
 
-wallet.init({xpub_van,xpub_col, rgbEndpoint,master_fingerprint,network});
+const wallet = createWalletManager({xpub_van,xpub_col, rgb_node_endpoint: rgbEndpoint,master_fingerprint,network:network.toLowerCase()});
 
 export { wallet };

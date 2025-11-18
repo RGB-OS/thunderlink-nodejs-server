@@ -5,6 +5,7 @@ import { logger } from '../lib/logger';
 import { notificationService } from '../services/notification';
 import { AssetNia } from '../types/wallet';
 import { NotificationType } from '../utils/notificationTemplate';
+import { deriveKeysFromMnemonic, signPsbt } from 'rgb-sdk';
 
 const CRON_INTERVAL_SECONDS = parseInt(process.env.CRON_INTERVAL_SECONDS || '60', 10);
 const CRON_INTERVAL_MS = CRON_INTERVAL_SECONDS * 1000;
@@ -19,18 +20,18 @@ export const handleWaitingTransfers = async () => {
 export const motitorBTCBalance = async () => {
   const balance = await wallet.getBtcBalance();
   const address = await wallet.getAddress();
-  const minBalance = parseInt(process.env.MIN_BTC_BALANCE || '10000', 10); 
+  const minBalance = parseInt(process.env.MIN_BTC_BALANCE || '10000', 10);
   console.log('balance ', balance.vanilla);
   if (balance.vanilla.spendable < minBalance) {
     logger.warn(`[BTC Balance Monitor] Low BTC Balance: ${balance} sats, below minimum threshold of ${minBalance} sats.`);
-    notificationService.notify(NotificationType.InsufficientBTC, {balance:balance.vanilla,address});
+    notificationService.notify(NotificationType.InsufficientBTC, { balance: balance.vanilla, address });
   }
 
 }
 export const motitorAssetBalance = async () => {
   const list = await wallet.listAssets();
   const assets = list.nia;
-  if(!assets || assets.length === 0) {
+  if (!assets || assets.length === 0) {
     logger.info('[Asset Balance Monitor] No assets found. Skipping asset balance check.');
     return;
   }
@@ -40,7 +41,7 @@ export const motitorAssetBalance = async () => {
     if (asset.balance.spendable < minRawBalance) {
       logger.warn(`[Asset Balance Monitor] Low Asset Balance for ${asset.name}: ${asset.balance.spendable} units, below minimum threshold of ${minBalance} units.`);
       notificationService.notify(NotificationType.LowAssetBalance, asset);
-    } 
+    }
   }
 }
 
@@ -53,7 +54,7 @@ export const startCronRunner = async () => {
 
     logger.info(`[CronRunner]  Starting with interval ${CRON_INTERVAL_MS / 1000}s Running maintenance tasks at ${new Date().toISOString()}`);
 
-    try {
+    try { 
       await wallet.registerWallet();
       await motitorBTCBalance();
       await motitorAssetBalance();

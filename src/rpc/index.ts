@@ -74,7 +74,7 @@ async function listenRPC() {
 
 export const startRPC = async () => {
     try {
-        await listenRPC();
+         await listenRPC();
     } catch (error) {
         logger.error({ error: String(error) }, 'Error starting RPC server');
         throw error;

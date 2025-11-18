@@ -4,7 +4,7 @@ import { getChannel } from "../rpc/channel";
 import { InvokeRPCMethod } from "../rpc/methodHandlers";
 import { pendingRequests } from "../rpc/pending";
 import { RpcMessage } from "../types/rpc";
-import { Unspent } from "../types/wallet";
+import { Unspent, RgbAllocation } from "../types/wallet";
 
 const UTXO_LIMIT = parseInt(process.env.UNSETELED_UTXO_LIMIT || '10', 10);
 // const UTXO_LIMIT = 33; // Default value for testing
@@ -12,9 +12,9 @@ const UTXO_LIMIT = parseInt(process.env.UNSETELED_UTXO_LIMIT || '10', 10);
 export const handleCreateUTXO = async () => {
     const unspents = await wallet.listUnspents();
 
-    const availableUtxos = unspents.filter(unspent => {
+    const availableUtxos = unspents.filter((unspent: Unspent) => {
         if (unspent.rgb_allocations.length === 0) return true;
-        return unspent.rgb_allocations.every(allocation => allocation.settled === false);
+        return unspent.rgb_allocations.every((allocation: RgbAllocation) => allocation.settled === false);
     });
 
     const availableCount = availableUtxos.length;
