@@ -1,4 +1,5 @@
-import { wallet, AssetNIA } from "rgb-sdk";
+import { AssetNIA } from "rgb-sdk";
+import { wallet } from "../lib/wallet";
 import { RgbTransfer, TransferStatus, Unspent,TransferKind } from "../types/wallet";
 import { logger } from "../lib/logger";
 import { InvoiceWatcher } from "../services/invoiceWatcherManager";
