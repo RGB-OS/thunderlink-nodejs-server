@@ -1,6 +1,6 @@
 import { Channel } from 'amqplib';
 import { RpcMessage } from '../types/rpc';
-import { wallet } from 'rgb-connect-nodejs';
+import { wallet } from 'rgb-sdk';
 import { pendingRequests } from './pending';
 import { getChannel } from './channel';
 import { logger } from '../lib/logger';

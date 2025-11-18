@@ -1,4 +1,4 @@
-import { createWalletManager, WalletManager } from 'rgb-connect-nodejs';
+import { createWalletManager, WalletManager } from 'rgb-sdk';
 
 const xpub_van = process.env.XPUB_VAN!;
 const xpub_col = process.env.XPUB_COL!;
@@ -23,6 +23,6 @@ if (!rgbEndpoint) {
   throw new Error('RGB_MANAGER_ENDPOINT is missing from environment variables');
 }
 
-const wallet = createWalletManager({xpub_van,xpub_col, rgb_node_endpoint: rgbEndpoint,master_fingerprint,network:'testnet'});
+const wallet = createWalletManager({xpub_van,xpub_col, rgb_node_endpoint: rgbEndpoint,master_fingerprint,network});
 
 export { wallet };

@@ -1,4 +1,4 @@
-import { wallet, AssetNIA } from "rgb-connect-nodejs";
+import { wallet, AssetNIA } from "rgb-sdk";
 import { RgbTransfer, TransferStatus, Unspent } from "../types/wallet";
 import { logger } from "../lib/logger";
 import { InvoiceWatcher } from "../services/invoiceWatcherManager";
@@ -6,7 +6,7 @@ import { InvoiceWatcher } from "../services/invoiceWatcherManager";
 export const handleExpiredTransfers = async () => {
 
     const listAssets = await wallet.listAssets();
-    const assetIds = listAssets.nia?.map((asset: AssetNIA) => asset.assetId);
+    const assetIds = listAssets.nia?.map((asset: AssetNIA) => asset.asset_id!);
 
 
     if (!assetIds || assetIds.length === 0) {

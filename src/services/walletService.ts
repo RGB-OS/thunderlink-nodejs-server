@@ -4,7 +4,7 @@ import { RgbAllocation, RgbTransfer, TransferStatus, Unspent } from '../types/wa
 import { wallet } from '../lib/wallet';
 import { logger } from '../lib/logger';
 import { InvoiceWatcher } from './invoiceWatcherManager';
-import { IssueAssetNiaRequestModel } from 'rgb-connect-nodejs';
+import { IssueAssetNiaRequestModel } from 'rgb-sdk';
 import { handleWaitingTransfers } from '../jobs/cronRunner';
 import axios from 'axios';
 
@@ -31,7 +31,7 @@ export const sendBegin = async (req: Request, res: Response): Promise<void> => {
         res.status(400).json({ error: 'Invalid invoice' });
         return;
     }
-    const psbt = await wallet.sendBegin({ invoice, amount, asset_id,witness_data } as any);
+    const psbt = await wallet.sendBegin({ invoice, amount, asset_id,witness_data });
     res.json(psbt);
 }
 
