@@ -67,6 +67,7 @@ export const listAssets = async (req: Request, res: Response): Promise<void> => 
 }
 export const getAssetBalance = async (req: Request, res: Response): Promise<void> => {
     const { asset_id } = req.body;
+    console.log('asset_id', asset_id);
     const balance = await wallet.getAssetBalance(asset_id);
     res.json(balance);
 }
