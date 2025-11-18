@@ -76,8 +76,8 @@ export const startCronRunner = async () => {
           stack: error.stack,
         }, '[CronRunner Critical Error] Cron stopped due to network or unexpected error');
       }
-      // logger.error({error},'[CronRunner Critical Error]  Cron stopped due to error');
-      cronRunning = false;
+      logger.error({error},'[CronRunner Critical Error]  Cron stopped due to error');
+      // cronRunning = false;
     }
   };
 
