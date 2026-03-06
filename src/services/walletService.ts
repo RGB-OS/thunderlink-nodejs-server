@@ -150,9 +150,9 @@ export const estimatefee = async (req: Request, res: Response): Promise<void> =>
 }
 
 export const createUtxosBegin = async (req: Request, res: Response): Promise<void> => {
-    const { num } = req.body;
+    const { up_to, num, size, fee_rate } = req.body;
     logger.debug({ body: req.body }, 'createutxos/begin');
-    const psbtBase64 = await wallet.createUtxosBegin({ num });
+    const psbtBase64 = await wallet.createUtxosBegin({ up_to, num, size, fee_rate });
     res.json(psbtBase64);
 }
 
