@@ -1,5 +1,5 @@
 import express from 'express';
-import { decodeRGBInvoice, estimatefee, failTransfers, getAddress, getAssetBalance, getBtcBalance, issueAssetNia, listAssets, listTransfers, listUnspents, refreshWallet, registerWallet, sendBegin, sendEnd } from '../services/walletService';
+import { createUtxosBegin, createUtxosEnd, decodeRGBInvoice, estimatefee, failTransfers, getAddress, getAssetBalance, getBtcBalance, issueAssetNia, listAssets, listTransfers, listUnspents, refreshWallet, registerWallet, sendBegin, sendEnd } from '../services/walletService';
 import { auth } from '../middlewares/auth';
 import { apiErrorHandler } from '../utils/apiErrorHandler';
 
@@ -16,6 +16,8 @@ router.post('/issueassetnia', auth, apiErrorHandler(issueAssetNia));
 router.post('/decodergbinvoice', auth, apiErrorHandler(decodeRGBInvoice));
 router.post('/sendbegin', auth, apiErrorHandler(sendBegin));
 router.post('/sendend', auth, apiErrorHandler(sendEnd));
+router.post('/createutxobegin', auth, apiErrorHandler(createUtxosBegin));
+router.post('/createutxoend', auth, apiErrorHandler(createUtxosEnd));
 router.post('/refresh', auth, apiErrorHandler(refreshWallet));
 router.post('/estimatefee',auth, apiErrorHandler(estimatefee));
 export default router;

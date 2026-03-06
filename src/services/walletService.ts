@@ -148,3 +148,18 @@ export const estimatefee = async (req: Request, res: Response): Promise<void> =>
         "fee_rate": 5.0
     });
 }
+
+export const createUtxosBegin = async (req: Request, res: Response): Promise<void> => {
+    const { num } = req.body;
+    logger.debug({ body: req.body }, 'createutxo/begin');
+    const psbtBase64 = await wallet.createUtxosBegin({ num });
+    res.json(psbtBase64);
+}
+
+export const createUtxosEnd = async (req: Request, res: Response): Promise<void> => {
+    const { signed_psbt } = req.body;
+    logger.debug({ body: req.body }, 'createutxo/end');
+    await wallet.createUtxosEnd({ signed_psbt });
+    res.json({ message: 'UTXO created successfully' });
+    logger.info('[createutxo-end] UTXOs created successfully');
+}
