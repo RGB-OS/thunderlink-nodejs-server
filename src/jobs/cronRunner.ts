@@ -58,8 +58,9 @@ export const startCronRunner = async () => {
       await wallet.registerWallet();
       await motitorBTCBalance();
       await motitorAssetBalance();
-      await handleExpiredTransfers();
-      await handleCreateUTXO();
+      // TODO: Remove these when the backend is ready
+      // await handleExpiredTransfers();
+      // await handleCreateUTXO();
 
       logger.info(`[CronRunner] Tasks completed`);
       timeoutHandle = setTimeout(loop, CRON_INTERVAL_MS); // only schedule next loop if successful
