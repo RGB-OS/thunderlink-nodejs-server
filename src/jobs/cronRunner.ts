@@ -46,6 +46,22 @@ export const motitorAssetBalance = async () => {
 }
 
 export const startCronRunner = async () => {
+  try {
+    await wallet.registerWallet();
+  }
+  catch (error: any) {
+    if (error.response) {
+      logger.error({
+        status: error.response.status,
+        data: error.response.data,
+      }, '[Register Wallet Error] ');
+    } else {
+      logger.error({
+        message: error.message,
+      }, '[Register Wallet Error]');
+    }
+    // cronRunning = false;
+  }
   const loop = async () => {
     if (!cronRunning) {
       logger.info('[CronRunner] Cron stopped. Exiting loop.');
@@ -54,16 +70,14 @@ export const startCronRunner = async () => {
 
     logger.info(`[CronRunner]  Starting with interval ${CRON_INTERVAL_MS / 1000}s Running maintenance tasks at ${new Date().toISOString()}`);
 
-    try { 
-      await wallet.registerWallet();
+    try {
       await motitorBTCBalance();
       await motitorAssetBalance();
       // TODO: Remove these when the backend is ready
       // await handleExpiredTransfers();
       // await handleCreateUTXO();
 
-      logger.info(`[CronRunner] Tasks completed`);
-      timeoutHandle = setTimeout(loop, CRON_INTERVAL_MS); // only schedule next loop if successful
+      logger.info(`[CronRunner] Tasks completed`); // only schedule next loop if successful
     } catch (error: any) {
       if (error.response) {
         // Log the real backend error message
@@ -78,9 +92,10 @@ export const startCronRunner = async () => {
           stack: error.stack,
         }, '[CronRunner Critical Error] Cron stopped due to network or unexpected error');
       }
-      logger.error({error},'[CronRunner Critical Error]  Cron stopped due to error');
+      logger.error({ error }, '[CronRunner Critical Error]  Cron stopped due to error');
       // cronRunning = false;
     }
+    timeoutHandle = setTimeout(loop, CRON_INTERVAL_MS);
   };
 
   loop();
